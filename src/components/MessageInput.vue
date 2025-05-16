@@ -6,8 +6,8 @@
         'mr-2',
         'text-gray-400 cursor-pointer hover:text-gray-600'
       ]" />
-      <input class="outline-none border-0 flex-1 bg-white focus:ring-0" type="text">
-      <Button icon-name="radix-icons:paper-plane">
+      <input class="outline-none border-0 flex-1 bg-white focus:ring-0" type="text" v-model="model">
+      <Button icon-name="radix-icons:paper-plane" @click="onCreate">
         发送
       </Button>
     </div>
@@ -15,6 +15,15 @@
 </template>
 
 <script lang="ts" setup>
+import { Icon } from '@iconify/vue'
 import Button from './Button.vue'
-
+const emit = defineEmits<{
+  create: [value: string]
+}>()
+const model = defineModel<string>()
+const onCreate = () => {
+  if (model.value && model.value.trim() !== '') {
+    emit('create', model.value)
+  }
+}
 </script>

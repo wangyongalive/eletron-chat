@@ -24,75 +24,17 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue";
+import { ref, onMounted } from "vue";
 import ConversationList from "./components/ConversationList.vue";
 import Button from './components/Button.vue';
+import { db, initProviders } from "./db";
 import { ConversationProps } from "./types";
 
-const conversations: ConversationProps[] = [
-  {
-    id: 1,
-    selectedModel: "GPT-3.5-Turbo",
-    title: "1 什么是光合作用",
-    createdAt: "2024-07-03",
-    updatedAt: "2024-07-03",
-    providerId: 1,
-  },
-  {
-    id: 2,
-    selectedModel: "GPT-3.5-Turbo",
-    title: "2 什么是光合作用",
-    createdAt: "2024-07-03",
-    updatedAt: "2024-07-03",
-    providerId: 1,
-  },
-  {
-    id: 3,
-    selectedModel: "GPT-3.5-Turbo",
-    title: "3 什么是光合作用",
-    createdAt: "2024-07-03",
-    updatedAt: "2024-07-03",
-    providerId: 1,
-  },
-  {
-    id: 4,
-    selectedModel: "GPT-3.5-Turbo",
-    title: "什么是光合作用, 你的说法很请正确，理解的很不错",
-    createdAt: "2024-07-03",
-    updatedAt: "2024-07-03",
-    providerId: 1,
-  },
-  {
-    id: 5,
-    selectedModel: "GPT-3.5-Turbo",
-    title: "什么是光合作用1",
-    createdAt: "2024-07-03",
-    updatedAt: "2024-07-03",
-    providerId: 1,
-  },
-  {
-    id: 6,
-    selectedModel: "GPT-3.5-Turbo",
-    title: "什么是光合作用",
-    createdAt: "2024-07-03",
-    updatedAt: "2024-07-03",
-    providerId: 1,
-  },
-  {
-    id: 7,
-    selectedModel: "GPT-3.5-Turbo",
-    title: "什么是光合作用",
-    createdAt: "2024-07-03",
-    updatedAt: "2024-07-03",
-    providerId: 1,
-  },
-  {
-    id: 8,
-    selectedModel: "GPT-3.5-Turbo",
-    title: "什么是光合作用, 你的说法很请正确，理解的很不错",
-    createdAt: "2024-07-03",
-    updatedAt: "2024-07-03",
-    providerId: 1,
-  },
-];
+const conversations = ref<ConversationProps[]>([])
+
+onMounted(async () => {
+  await initProviders();
+  conversations.value = await db.conversations.toArray(); // 只有加载初始化的时候，才会赋值。响应式有问题
+})
+
 </script>

@@ -23,7 +23,6 @@ const router = useRouter()
 
 onMounted(async () => {
   providers.value = await db.providers.toArray()
-  console.log('', providers.value)
 });
 
 const currentProvider = ref('');

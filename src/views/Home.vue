@@ -16,10 +16,13 @@ import ProviderSelect from '../components/ProviderSelect.vue';
 import MessageInput from '../components/MessageInput.vue';
 import { db } from '../db'
 import { ProviderProps } from "../types";
+import { useConversationStore } from '../stores/conversation'
 
 const providers = ref<ProviderProps[]>([])
 
 const router = useRouter()
+
+const conversationStore = useConversationStore();
 
 onMounted(async () => {
   providers.value = await db.providers.toArray()
@@ -37,13 +40,14 @@ const modelInfo = computed(() => {
 const createConversation = async (question: string) => {
   const { providerId, selectedModel } = modelInfo.value;
   const currentDate = new Date().toISOString();
-  const conversationId = await db.conversations.add({
+  const conversationId = await conversationStore.createConversation({
     title: question,
     selectedModel,
     createdAt: currentDate,
     updatedAt: currentDate,
     providerId,
   })
+
   const newMessageId = await db.messages.add({
     content: question,
     type: "question",

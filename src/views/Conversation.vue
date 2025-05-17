@@ -67,6 +67,9 @@ onMounted(async () => {
     lastQuestion = lastMessage?.content || '';
     await createInitialMessage()
   }
+  window.electronAPI.onUpdateMessage((streamData) => {
+    console.log('update message', streamData)
+  })
 })
 
 </script>

@@ -43,7 +43,7 @@
     "vite": "^5.4.19"
   },
   "dependencies": {
-    "@baiducloud/qianfan": "^0.2.3",
+    "@baiducloud/qianfan": "^0.1.6",
     "dayjs": "^1.11.13",
     "dexie": "^4.0.8",
     "electron-squirrel-startup": "^1.0.1",

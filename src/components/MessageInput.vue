@@ -7,7 +7,7 @@
         'text-gray-400 cursor-pointer hover:text-gray-600'
       ]" />
       <input class="outline-none border-0 flex-1 bg-white focus:ring-0" type="text" v-model="model">
-      <Button icon-name="radix-icons:paper-plane" @click="onCreate">
+      <Button icon-name="radix-icons:paper-plane" @click="onCreate" :disabled="disabled">
         发送
       </Button>
     </div>
@@ -17,6 +17,11 @@
 <script lang="ts" setup>
 import { Icon } from '@iconify/vue'
 import Button from './Button.vue'
+
+const props = defineProps<{
+  disabled?: boolean;
+}>()
+
 const emit = defineEmits<{
   create: [value: string]
 }>()

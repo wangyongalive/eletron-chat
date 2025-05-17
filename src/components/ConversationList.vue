@@ -4,7 +4,7 @@
       :key="item.id">
       <a @click.prevent="goToConversation(item.id)">
         <div class="flex justify-between items-center text-sm leading-5 texy-gray-500">
-          <span>{{ dayjs(item.selectedModel).format("YYYY-MM-DD") }}</span>
+          <span>{{ item.selectedModel }}</span>
           <span>{{ dayjs(item.updatedAt).format("YYYY-MM-DD") }}</span>
         </div>
         <h2 class="font-semibold leading-9 text-gray-900 truncate">

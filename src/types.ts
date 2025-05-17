@@ -29,3 +29,10 @@ export interface MessageProps {
   updatedAt: string;
   imagePath?: string;
 }
+
+export interface CreateChatProps {
+  content: string;
+  providerName: string;
+  selectedModel: string;
+  messageId: number;
+}

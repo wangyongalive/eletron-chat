@@ -26,9 +26,12 @@ export const useMessageStore = defineStore("message", {
       const currentMessage = this.items.find((item) => item.id === messageId);
       if (currentMessage) {
         const updatedData = {
-          content: currentMessage.content + data.result,
-          status: data.is_end ? "finished" : ("loading" as MessageStatus),
+          status: (data.is_end ? "finished" : "streaming") as MessageStatus,
           updatedAt: new Date().toISOString(),
+          ...(!data.is_end && {
+            // 没有结束的时候才更新content
+            content: currentMessage.content + data.result,
+          }),
         };
         await db.messages.update(messageId, updatedData);
         const index = this.items.findIndex(

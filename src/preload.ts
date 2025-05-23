@@ -9,4 +9,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
     console.log("onUpdateMessage");
     ipcRenderer.on("update-message", (_event, value) => callback(value));
   },
+  copyImageToUserDir: (sourcePath: string) =>
+    ipcRenderer.invoke("copy-image-to-user-dir", sourcePath),
 });

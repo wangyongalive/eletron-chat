@@ -96,6 +96,7 @@ watch(() => route.params.id, async (newId) => {
   conversationId.value = parseInt(newId as string);
   await messageStore.fetchConversations(conversationId.value) // 使用store的actions替换
   await messageScrollToBottom()
+  currentMessageListHeight = 0
 })
 
 onMounted(async () => {

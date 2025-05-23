@@ -37,6 +37,7 @@ export const useMessageStore = defineStore("message", {
         const index = this.items.findIndex(
           (message) => message.id === messageId
         );
+        // 更新pinia的state
         if (index !== -1) {
           this.items[index] = { ...this.items[index], ...updatedData };
         }

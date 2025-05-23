@@ -51,7 +51,7 @@ const createWindow = () => {
       });
       const stream = await client.chat.completions.create({
         messages: messages as any,
-        model: "qwen-turbo",
+        model: selectedModel,
         stream: true,
       });
       for await (const chunk of stream) {

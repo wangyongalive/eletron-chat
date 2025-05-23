@@ -1,11 +1,8 @@
 <template>
-  <button
-    class="vk-button
+  <button class="
     shadow-sm inline-flex items-center justify-center
-     disabled:opacity-50 disabled:pointer-events-none"
-    :class="[colorClasses, sizeClasses]"
-    :disabled="disabled || loading"
-  >
+     disabled:opacity-50 disabled:pointer-events-none" :class="[colorClasses, sizeClasses]"
+    :disabled="disabled || loading">
     <Icon :icon="iconWithLoading" class="mr-2" v-if="iconWithLoading" />
     <slot></slot>
   </button>
@@ -34,7 +31,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   color: 'green'
 })
 const colorVariants: Record<ButtonColor, any> = {
-  'green' : {
+  'green': {
     plain: 'bg-green-50 text-green-700 hover:bg-green-700 border border-green-700 hover:text-white',
     normal: 'bg-green-700 text-white hover:bg-green-700/90 border border-green-700'
   },
@@ -59,7 +56,7 @@ const colorClasses = computed(() => {
 })
 const sizeClasses = computed(() => {
   if (!props.size) {
-    return 'h-[32px] py-[8px] px-[15px] text-sm rounded-[4px]' 
+    return 'h-[32px] py-[8px] px-[15px] text-sm rounded-[4px]'
   } else {
     if (props.size === 'large') {
       return 'h-[40px] py-[12px] px-[19px] rounded-[4px] text-base'

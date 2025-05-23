@@ -14,7 +14,7 @@
               <Icon icon="eos-icons:three-dots-loading"></Icon>
             </template>
             <template v-else>
-              <span>{{ message.content }}</span>
+              <vue-markdown :source="message.content"></vue-markdown>
             </template>
           </div>
         </div>
@@ -26,6 +26,7 @@
 <script lang="ts" setup>
 import { Icon } from '@iconify/vue'
 import { MessageProps } from '../types'
+import VueMarkdown from 'vue-markdown-render'
 defineProps<{ messages: MessageProps[] }>()
 
 </script>

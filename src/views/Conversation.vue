@@ -16,7 +16,7 @@ import { onMounted, ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import MessageInput from '../components/MessageInput.vue'
 import MessageList from '../components/MessageList.vue'
-import { MessageProps, MessageStatus } from '../types'
+import { MessageProps } from '../types'
 import { db } from '../db'
 import { useConversationStore } from '../stores/conversation'
 import { useMessageStore } from '../stores/message'
@@ -35,8 +35,8 @@ const sendedMessages = computed(() => filteredMessages.value
     }
   })
 )
-let conversationId = ref(parseInt(route.params.id as string))
-const initMessageId = parseInt(route.query.init as string)
+let conversationId = ref(parseInt(route.params.id as string)) // 路由参数
+const initMessageId = parseInt(route.query.init as string) // 初始化标记
 const conversation = computed(() => conversationStore.getConversationById(conversationId.value))
 let lastQuestion = computed(() => messageStore.getLastQuestion(conversationId.value)) // 获取最后一条问题
 
@@ -70,6 +70,7 @@ const creatingInitialMessage = async () => {
     const provider = await db.providers.where({ id: conversation.value.providerId }).first()
     if (provider) {
       console.log('start chat', lastQuestion)
+      // 调用electronAPI的startChat方法
       await window.electronAPI.startChat({
         providerName: provider.name,
         selectedModel: conversation.value?.selectedModel || '',
@@ -81,6 +82,7 @@ const creatingInitialMessage = async () => {
 }
 
 watch(() => route.params.id, async (newId) => {
+  console.log('watch')
   conversationId.value = parseInt(newId as string);
   messageStore.fetchConversations(conversationId.value) // 使用store的actions替换
 })

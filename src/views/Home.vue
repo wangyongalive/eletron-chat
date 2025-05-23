@@ -40,6 +40,7 @@ const modelInfo = computed(() => {
 const createConversation = async (question: string) => {
   const { providerId, selectedModel } = modelInfo.value;
   const currentDate = new Date().toISOString();
+  // 
   const conversationId = await conversationStore.createConversation({
     title: question,
     selectedModel,

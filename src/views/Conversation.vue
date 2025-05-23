@@ -4,7 +4,7 @@
     <span class="text-sm text-gray-500">{{ conversation.updatedAt }}</span>
   </div>
   <div class="w-[80%] mx-auto h-[75%] overflow-y-auto pt-2">
-    <MessageList :messages="filteredMessages" />
+    <MessageList :messages="filteredMessages" ref="messageListRef" />
   </div>
   <div class="w-[80%] mx-auto h-[15%] flex items-center">
     <MessageInput @create="sendNewMessage" v-model="inputValue" />
@@ -12,16 +12,18 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, computed } from 'vue'
+import { onMounted, ref, watch, computed, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import MessageInput from '../components/MessageInput.vue'
 import MessageList from '../components/MessageList.vue'
-import { MessageProps } from '../types'
+import { MessageProps, MessageListInstance } from '../types'
 import { db } from '../db'
 import { useConversationStore } from '../stores/conversation'
 import { useMessageStore } from '../stores/message'
 
 const inputValue = ref('')
+const messageListRef = ref<MessageListInstance>()
+
 const route = useRoute()
 const conversationStore = useConversationStore();
 const messageStore = useMessageStore();
@@ -56,6 +58,13 @@ const sendNewMessage = async (question: string) => {
   }
 }
 
+const messageScrollToBottom = async () => {
+  await nextTick() // 等待下一次DOM更新完成后再执行滚动操作 以确保元素已经渲染到页面上
+  if (messageListRef.value) {
+    messageListRef.value.ref.scrollIntoView({ block: 'end', behavior: 'smooth' })
+  }
+}
+
 const creatingInitialMessage = async () => {
   const createdData: Omit<MessageProps, "id"> = {
     content: "",
@@ -66,6 +75,7 @@ const creatingInitialMessage = async () => {
     status: 'loading'
   }
   const newMessageId = await messageStore.createMessage(createdData)
+  await messageScrollToBottom()
   if (conversation.value) {
     const provider = await db.providers.where({ id: conversation.value.providerId }).first()
     if (provider) {
@@ -82,13 +92,14 @@ const creatingInitialMessage = async () => {
 }
 
 watch(() => route.params.id, async (newId) => {
-  console.log('watch')
   conversationId.value = parseInt(newId as string);
-  messageStore.fetchConversations(conversationId.value) // 使用store的actions替换
+  await messageStore.fetchConversations(conversationId.value) // 使用store的actions替换
+  await messageScrollToBottom()
 })
 
 onMounted(async () => {
-  messageStore.fetchConversations(conversationId.value)
+  await messageStore.fetchConversations(conversationId.value) // 要添加await 否则滑动到底部会失效
+  await messageScrollToBottom()
   if (initMessageId) {
     await creatingInitialMessage()
   }

@@ -21,6 +21,7 @@ import { db } from '../db'
 import { useConversationStore } from '../stores/conversation'
 import { useMessageStore } from '../stores/message'
 
+let currentMessageListHeight = 0
 const inputValue = ref('')
 const messageListRef = ref<MessageListInstance>()
 
@@ -103,9 +104,24 @@ onMounted(async () => {
   if (initMessageId) {
     await creatingInitialMessage()
   }
+
+  const checkAndScrollToBottom = async () => {
+    if (messageListRef.value) {
+      const newHeight = messageListRef.value.ref.clientHeight
+      // console.log('the newHeight', newHeight)
+      // console.log('the currentMessageListHeight', currentMessageListHeight)
+      if (newHeight > currentMessageListHeight) {
+        // console.log('scroll to bottom')
+        currentMessageListHeight = newHeight
+        await messageScrollToBottom()
+      }
+    }
+  }
+
   window.electronAPI.onUpdateMessage(async (streamData) => {
     console.log('streamData', streamData)
-    messageStore.updateMessage(streamData)
+    await messageStore.updateMessage(streamData)
+    await checkAndScrollToBottom()
   })
 })
 

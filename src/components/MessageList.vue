@@ -4,9 +4,12 @@
       <div class="flex" :class="{ 'justify-end': message.type === 'question' }">
         <div>
           <div class="text-sm text-gray-500 mb-2" :class="{ 'text-right': message.type === 'question' }">
-            {{ message.createdAt }}
+            {{ dayjs(message.createdAt).format('YYYY/MM/DD HH:mm') }}
           </div>
           <div class="message-question bg-green-700 text-white p-2 rounded-md" v-if="message.type === 'question'">
+            <!-- windows平台需要使用\\ -->
+            <img v-if="message.imagePath" :src="`safe-file:${isWindows ? '\\\\' : '//'}${message.imagePath}`"
+              alt="Message image" class="h-24 w-24 object-cover rounded block">
             {{ message.content }}
           </div>
           <div class="message-answer bg-gray-200  text-gray-700 p-2 rounded-md" v-else>
@@ -30,13 +33,14 @@ import { Icon } from '@iconify/vue'
 import { MessageProps } from '../types'
 import VueMarkdown from 'vue-markdown-render'
 import markdownItHighlightjs from 'markdown-it-highlightjs'
+import dayjs from 'dayjs'
 const plugins = [markdownItHighlightjs]
 defineProps<{ messages: MessageProps[] }>()
 const _ref = ref<HTMLDivElement>()
 defineExpose({
   ref: _ref
 })
-
+const isWindows = navigator.userAgent.includes('Windows')
 </script>
 
 <style lang="scss" scoped></style>

@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-between h-screen">
     <div class="bg-gray-200 text-gray-700 w-[300px] h-full border-r border-gray-300">
-      <div class="h-[90%] overflow-y-auto">
+      <div class="h-[90%] overflow-y-auto  scrollbar-thin">
         <ConversationList :items="items" />
         <h3>{{ conversationStore.totalNumbers }}</h3>
       </div>

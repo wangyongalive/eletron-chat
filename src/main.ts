@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, protocol, net } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
 import { CreateChatProps, updatedStreamData } from "./types";
@@ -6,6 +6,8 @@ import { ChatCompletion } from "@baiducloud/qianfan";
 import OpenAI from "openai";
 import "dotenv/config";
 import fs from "fs/promises";
+import { convertMessages } from "./helper";
+import url from "url";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -25,11 +27,13 @@ const createWindow = () => {
   ipcMain.on("start-chat", async (event, data: CreateChatProps) => {
     console.log("data", data);
     const { providerName, selectedModel, messages, messageId } = data;
+    const convertedMessages = await convertMessages(messages);
+    console.log("convertedMessages", convertedMessages);
     if (providerName === "qianfan") {
       const client = new ChatCompletion();
       const stream = await client.chat(
         {
-          messages,
+          messages: convertedMessages,
           stream: true,
         },
         selectedModel
@@ -51,7 +55,7 @@ const createWindow = () => {
         baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
       });
       const stream = await client.chat.completions.create({
-        messages: messages as any,
+        messages: convertedMessages as any,
         model: selectedModel,
         stream: true,
       });
@@ -82,6 +86,19 @@ const createWindow = () => {
       return destPath;
     }
   );
+
+  // 处理本地文件的安全访问机制;
+  protocol.handle("safe-file", async (request) => {
+    console.log(request.url, "url");
+    const filePath = decodeURIComponent(
+      request.url.slice("safe-file::\\".length)
+    );
+    console.log(filePath, "filePath");
+    // 将本地文件路径转换为 file:// 格式的 URL
+    const newFilePath = url.pathToFileURL(filePath).toString();
+    console.log(newFilePath, "newFilePath");
+    return net.fetch(newFilePath);
+  });
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {

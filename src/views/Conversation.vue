@@ -1,9 +1,9 @@
 <template>
   <div class="h-[10%] bg-gray-200 border-b border-gray-300 flex items-center px-3 justify-between" v-if="conversation">
     <h3 class="font-semibold  text-gray-900">{{ conversation.title }}</h3>
-    <span class="text-sm text-gray-500">{{ conversation.updatedAt }}</span>
+    <span class="text-sm text-gray-500">{{ dayjs(conversation.updatedAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
   </div>
-  <div class="w-[80%] mx-auto h-[75%] overflow-y-auto pt-2">
+  <div class="w-[80%] mx-auto h-[75%] overflow-y-auto pt-2 scrollbar-thin">
     <MessageList :messages="filteredMessages" ref="messageListRef" />
   </div>
   <div class="w-[80%] mx-auto h-[15%] flex items-center">
@@ -20,6 +20,7 @@ import { MessageProps, MessageListInstance } from '../types'
 import { db } from '../db'
 import { useConversationStore } from '../stores/conversation'
 import { useMessageStore } from '../stores/message'
+import dayjs from 'dayjs'
 
 let currentMessageListHeight = 0
 const inputValue = ref('')
@@ -35,6 +36,7 @@ const sendedMessages = computed(() => filteredMessages.value
     return {
       role: message.type === 'question' ? 'user' : 'assistant',
       content: message.content,
+      ...(message.imagePath && { imagePath: message.imagePath })
     }
   })
 )
@@ -43,8 +45,17 @@ const initMessageId = parseInt(route.query.init as string) // 初始化标记
 const conversation = computed(() => conversationStore.getConversationById(conversationId.value))
 let lastQuestion = computed(() => messageStore.getLastQuestion(conversationId.value)) // 获取最后一条问题
 
-const sendNewMessage = async (question: string) => {
+const sendNewMessage = async (question: string, imagePath?: string) => {
   if (question) {
+    let copiedImagePath: string | undefined
+    if (imagePath) {
+      try {
+        copiedImagePath = await window.electronAPI.copyImageToUserDir(imagePath)
+        console.log('copiedImagePath', copiedImagePath)
+      } catch (error) {
+        console.error('Failed to copy image:', error)
+      }
+    }
     const date = new Date().toISOString()
     await messageStore.createMessage({
       content: question,
@@ -52,7 +63,7 @@ const sendNewMessage = async (question: string) => {
       createdAt: date,
       updatedAt: date,
       type: 'question',
-
+      ...(copiedImagePath && { imagePath: copiedImagePath })
     })
     inputValue.value = ''
     creatingInitialMessage()

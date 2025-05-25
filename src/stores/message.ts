@@ -28,7 +28,7 @@ export const useMessageStore = defineStore("message", {
         const updatedData = {
           status: (data.is_end ? "finished" : "streaming") as MessageStatus,
           updatedAt: new Date().toISOString(),
-          ...(!data.is_end && {
+          ...((!data.is_end || data.result) && {
             // 没有结束的时候才更新content
             content: currentMessage.content + data.result,
           }),

@@ -54,3 +54,8 @@ export type OnUpdatedCallback = (data: updatedStreamData) => void;
 export interface MessageListInstance {
   ref: HTMLDivElement;
 }
+
+export interface UniversalChunkProps {
+  is_end: boolean;
+  result: string;
+}

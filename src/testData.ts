@@ -196,7 +196,7 @@ export const providers: ProviderProps[] = [
     title: "DeepSeek",
     desc: "DeepSeek",
     // https://api-docs.deepseek.com/zh-cn/
-    models: ["deepseek-chat"],
+    models: ["deepseek-chat", "deepseek-reasoner"],
     avatar:
       "https://qph.cf2.poecdn.net/main-thumb-pb-4981273-200-phhqenmywlkiybehuaqvsxpfekviajex.jpeg",
     createdAt: "2024-12-27",

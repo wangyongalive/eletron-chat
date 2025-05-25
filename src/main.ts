@@ -55,7 +55,7 @@ const createWindow = () => {
         baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
       });
       const stream = await client.chat.completions.create({
-        messages: convertedMessages as any,
+        messages: convertedMessages as  OpenAI.ChatCompletionMessageParam[],
         model: selectedModel,
         stream: true,
       });

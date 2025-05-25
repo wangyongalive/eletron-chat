@@ -17,7 +17,6 @@ export interface ProviderProps {
   updatedAt: string;
   models: string[];
 }
-
 export type MessageStatus = "loading" | "streaming" | "finished" | "error";
 export interface MessageProps {
   id: number;

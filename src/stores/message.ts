@@ -21,26 +21,11 @@ export const useMessageStore = defineStore("message", {
       this.items.push({ id: newMessageId, ...createdData });
       return newMessageId;
     },
-    async updateMessage(streamData: updatedStreamData) {
-      const { messageId, data } = streamData;
-      const currentMessage = this.items.find((item) => item.id === messageId);
-      if (currentMessage) {
-        const updatedData = {
-          status: (data.is_end ? "finished" : "streaming") as MessageStatus,
-          updatedAt: new Date().toISOString(),
-          ...((!data.is_end || data.result) && {
-            // 没有结束的时候才更新content
-            content: currentMessage.content + data.result,
-          }),
-        };
-        await db.messages.update(messageId, updatedData);
-        const index = this.items.findIndex(
-          (message) => message.id === messageId
-        );
-        // 更新pinia的state
-        if (index !== -1) {
-          this.items[index] = { ...this.items[index], ...updatedData };
-        }
+    async updateMessage(messageId: number, updatedData: Partial<MessageProps>) {
+      await db.messages.update(messageId, updatedData);
+      const index = this.items.findIndex((item) => item.id === messageId);
+      if (index !== -1) {
+        this.items[index] = { ...this.items[index], ...updatedData };
       }
     },
   },

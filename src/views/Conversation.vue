@@ -16,7 +16,7 @@ import { onMounted, ref, watch, computed, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import MessageInput from '../components/MessageInput.vue'
 import MessageList from '../components/MessageList.vue'
-import { MessageProps, MessageListInstance } from '../types'
+import { MessageProps, MessageListInstance, MessageStatus } from '../types'
 import { db } from '../db'
 import { useConversationStore } from '../stores/conversation'
 import { useMessageStore } from '../stores/message'
@@ -116,7 +116,7 @@ onMounted(async () => {
   if (initMessageId) {
     await creatingInitialMessage()
   }
-
+  let streamContent = ''
   const checkAndScrollToBottom = async () => {
     if (messageListRef.value) {
       const newHeight = messageListRef.value.ref.clientHeight
@@ -132,8 +132,21 @@ onMounted(async () => {
 
   window.electronAPI.onUpdateMessage(async (streamData) => {
     console.log('streamData', streamData)
-    await messageStore.updateMessage(streamData)
+    const { messageId, data } = streamData
+    streamContent += data.result
+    const updatedData = {
+      content: streamContent,
+      status: data.is_end ? 'finished' : 'streaming' as MessageStatus,
+      updatedAt: new Date().toISOString()
+    }
+    // update database
+    // update filteredMessages
+    await messageStore.updateMessage(messageId, updatedData)
+    await nextTick()
     await checkAndScrollToBottom()
+    if (data.is_end) {
+      streamContent = ''
+    }
   })
 })
 

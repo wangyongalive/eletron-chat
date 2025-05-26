@@ -1,7 +1,7 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 import { contextBridge, ipcRenderer } from "electron";
-import { CreateChatProps, OnUpdatedCallback } from "./types";
+import { CreateChatProps, OnUpdatedCallback, AppConfig } from "./types";
 
 contextBridge.exposeInMainWorld("electronAPI", {
   startChat: (data: CreateChatProps) => ipcRenderer.send("start-chat", data),
@@ -11,4 +11,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   },
   copyImageToUserDir: (sourcePath: string) =>
     ipcRenderer.invoke("copy-image-to-user-dir", sourcePath),
+  getConfig: () => ipcRenderer.invoke("get-config"),
+  updateConfig: (config: Partial<AppConfig>) =>
+    ipcRenderer.invoke("update-config", config),
 });

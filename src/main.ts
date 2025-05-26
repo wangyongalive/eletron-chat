@@ -6,6 +6,7 @@ import "dotenv/config";
 import fs from "fs/promises";
 import url from "url";
 import { createProvider } from "./providers/createProvider";
+import { configManager } from "./config";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -106,6 +107,15 @@ const createWindow = () => {
     const newFilePath = url.pathToFileURL(filePath).toString();
     console.log(newFilePath, "newFilePath");
     return net.fetch(newFilePath);
+  });
+
+  // Config handlers
+  ipcMain.handle("get-config", () => {
+    return configManager.get();
+  });
+
+  ipcMain.handle("update-config", async (event, newConfig) => {
+    return await configManager.update(newConfig);
   });
 
   // and load the index.html of the app.

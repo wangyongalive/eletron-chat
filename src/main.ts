@@ -17,7 +17,6 @@ const createWindow = async () => {
   // 初始化配置
   await configManager.load();
 
-
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1024,
@@ -28,17 +27,29 @@ const createWindow = async () => {
   });
 
   ipcMain.on("start-chat", async (event, data: CreateChatProps) => {
-    const { providerName, selectedModel, messages, messageId } = data;
-
-    const provider = createProvider(providerName);
-    console.log("provider", provider);
-    const stream = await provider.chat(messages, selectedModel);
-    for await (const chunk of stream) {
-      const content: updatedStreamData = {
+    const { providerName, messages, messageId, selectedModel } = data;
+    try {
+      const provider = createProvider(providerName);
+      const stream = await provider.chat(messages, selectedModel);
+      for await (const chunk of stream) {
+        const content = {
+          messageId,
+          data: chunk,
+        };
+        mainWindow.webContents.send("update-message", content);
+      }
+    } catch (error) {
+      console.error("Chat error:", error);
+      const errorContent = {
         messageId,
-        data: chunk,
+        data: {
+          is_end: true,
+          result:
+            error instanceof Error ? error.message : "与AI服务通信时发生错误",
+          is_error: true,
+        },
       };
-      mainWindow.webContents.send("update-message", content);
+      mainWindow.webContents.send("update-message", errorContent);
     }
 
     // if (providerName === "qianfan") {

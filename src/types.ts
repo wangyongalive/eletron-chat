@@ -46,6 +46,7 @@ export interface updatedStreamData {
   data: {
     is_end: boolean;
     result: string;
+    is_error?: boolean;
   };
 }
 

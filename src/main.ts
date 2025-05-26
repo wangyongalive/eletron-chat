@@ -13,7 +13,11 @@ if (started) {
   app.quit();
 }
 
-const createWindow = () => {
+const createWindow = async () => {
+  // 初始化配置
+  await configManager.load();
+
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1024,
@@ -98,7 +102,7 @@ const createWindow = () => {
 
   // 处理本地文件的安全访问机制;
   protocol.handle("safe-file", async (request) => {
-    console.log(request.url, "url");
+    // console.log(request.url, "url");
     const filePath = decodeURIComponent(
       request.url.slice("safe-file::\\".length)
     );

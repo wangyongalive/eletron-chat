@@ -31,6 +31,7 @@ import { createApp } from "vue";
 import { createRouter, createMemoryHistory } from "vue-router";
 import App from "./App.vue";
 import "highlight.js/styles/github-dark.min.css";
+import { i18n } from "./i18n/index";
 
 import Home from "./views/Home.vue";
 import Conversation from "./views/Conversation.vue";
@@ -50,4 +51,5 @@ const pinia = createPinia();
 const app = createApp(App);
 app.use(router);
 app.use(pinia);
+app.use(i18n);
 app.mount("#app");

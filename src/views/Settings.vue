@@ -3,12 +3,12 @@
     <!-- Language Setting -->
     <div class="flex items-center gap-8">
       <label class="text-sm font-medium text-gray-700 w-24">
-        语言
+        {{ t('settings.language') }}
       </label>
       <SelectRoot v-model="currentConfig.language" class="w-[160px]">
         <SelectTrigger
           class="inline-flex items-center justify-between rounded-md px-3 py-2 text-sm gap-1 bg-white border border-gray-300">
-          <SelectValue placeholder="选择语言..." />
+          <SelectValue :placeholder="t('settings.selectLanguage')" />
           <SelectIcon>
             <Icon icon="radix-icons:chevron-down" />
           </SelectIcon>
@@ -19,14 +19,14 @@
               <SelectGroup>
                 <SelectItem value="zh"
                   class="relative flex items-center px-8 py-2 text-sm text-gray-700 rounded-md cursor-default hover:bg-gray-100">
-                  <SelectItemText>中文</SelectItemText>
+                  <SelectItemText>{{ t('common.chinese') }}</SelectItemText>
                   <SelectItemIndicator class="absolute left-2 inline-flex items-center">
                     <Icon icon="radix-icons:check" />
                   </SelectItemIndicator>
                 </SelectItem>
                 <SelectItem value="en"
                   class="relative flex items-center px-8 py-2 text-sm text-gray-700 rounded-md cursor-default hover:bg-gray-100">
-                  <SelectItemText>English</SelectItemText>
+                  <SelectItemText>{{ t('common.english') }}</SelectItemText>
                   <SelectItemIndicator class="absolute left-2 inline-flex items-center">
                     <Icon icon="radix-icons:check" />
                   </SelectItemIndicator>
@@ -41,7 +41,7 @@
     <!-- Font Size Setting -->
     <div class="flex items-center gap-8">
       <label class="text-sm font-medium text-gray-700 w-24">
-        字体大小
+        {{ t('settings.fontSize') }}
       </label>
       <NumberFieldRoot v-model="currentConfig.fontSize" class="inline-flex w-[100px]">
         <NumberFieldDecrement
@@ -63,7 +63,9 @@
 <script setup lang="ts">
 import { reactive, onMounted, watch } from 'vue'
 import { Icon } from '@iconify/vue'
+import { useI18n } from 'vue-i18n'
 import { AppConfig } from '../types'
+import { setI18nLanguage } from '../i18n'
 
 import {
   SelectContent,
@@ -82,6 +84,8 @@ import {
   NumberFieldIncrement,
   NumberFieldDecrement
 } from 'radix-vue'
+
+const { t } = useI18n()
 
 const currentConfig = reactive<AppConfig>({
   language: 'zh',
@@ -102,5 +106,7 @@ watch(currentConfig, async (newConfig) => {
     fontSize: newConfig.fontSize
   }
   await window.electronAPI.updateConfig(configToSave)
+  // 更新界面语言
+  setI18nLanguage(newConfig.language)
 }, { deep: true })
 </script>

@@ -12,6 +12,13 @@ contextBridge.exposeInMainWorld("electronAPI", {
   copyImageToUserDir: (sourcePath: string) =>
     ipcRenderer.invoke("copy-image-to-user-dir", sourcePath),
   getConfig: () => ipcRenderer.invoke("get-config"),
+  showContextMenu: (id: number) => ipcRenderer.send("show-context-menu", id),
+  onDeleteConversation: (callback: (id: number) => void) =>
+    ipcRenderer.on("delete-conversation", (_event, id) => callback(id)),
   updateConfig: (config: Partial<AppConfig>) =>
     ipcRenderer.invoke("update-config", config),
+  onMenuNewConversation: (callback: () => void) =>
+    ipcRenderer.on("menu-new-conversation", () => callback()),
+  onMenuOpenSettings: (callback: () => void) =>
+    ipcRenderer.on("menu-open-settings", () => callback()),
 });

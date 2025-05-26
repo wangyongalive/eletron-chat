@@ -1,12 +1,13 @@
 import { app, BrowserWindow, ipcMain, protocol, net } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
-import { CreateChatProps, updatedStreamData } from "./types";
+import { CreateChatProps } from "./types";
 import "dotenv/config";
 import fs from "fs/promises";
 import url from "url";
 import { createProvider } from "./providers/createProvider";
 import { configManager } from "./config";
+import { createMenu, updateMenu, createContextMenu } from "./menu";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -26,6 +27,9 @@ const createWindow = async () => {
     },
   });
 
+  // Create application menu
+  createMenu(mainWindow);
+
   ipcMain.on("start-chat", async (event, data: CreateChatProps) => {
     const { providerName, messages, messageId, selectedModel } = data;
     try {
@@ -39,7 +43,7 @@ const createWindow = async () => {
         mainWindow.webContents.send("update-message", content);
       }
     } catch (error) {
-      console.error("Chat error:", error);
+      // console.error("Chat error:", error);
       const errorContent = {
         messageId,
         data: {
@@ -130,7 +134,19 @@ const createWindow = async () => {
   });
 
   ipcMain.handle("update-config", async (event, newConfig) => {
-    return await configManager.update(newConfig);
+    const updatedConfig = await configManager.update(newConfig);
+    // 如果语言发生变化，更新菜单
+    if (newConfig.language) {
+      updateMenu(mainWindow);
+    }
+    return updatedConfig;
+  });
+
+  // Context menu handler
+  ipcMain.on("show-context-menu", (event, id) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (!win) return;
+    createContextMenu(win, id);
   });
 
   // and load the index.html of the app.

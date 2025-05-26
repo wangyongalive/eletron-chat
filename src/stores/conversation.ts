@@ -4,12 +4,14 @@ import { db } from "../db";
 
 export interface ConversationStore {
   items: ConversationProps[];
+  selectedId: number;
 }
 
 export const useConversationStore = defineStore("conersation", {
   state: (): ConversationStore => {
     return {
       items: [],
+      selectedId: -1,
     };
   },
   actions: {
@@ -23,6 +25,13 @@ export const useConversationStore = defineStore("conersation", {
         ...createdData,
       });
       return newCId;
+    },
+    async deleteConversation(id: number) {
+      await db.conversations.delete(id);
+      const index = this.items.findIndex((item) => item.id === id);
+      if (index > -1) {
+        this.items.splice(index, 1);
+      }
     },
   },
   getters: {

@@ -65,7 +65,7 @@ const createConversation = async (question: string, imagePath?: string) => {
     updatedAt: currentDate,
     ...(copiedImagePath && { imagePath: copiedImagePath })
   })
-
+  conversationStore.selectedId = conversationId
   router.push(`/conversation/${conversationId}?init=${newMessageId}`)
 }
 </script>

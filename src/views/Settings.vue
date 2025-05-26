@@ -154,8 +154,6 @@ const currentConfig = reactive<AppConfig>({
 onMounted(async () => {
   const config = await window.electronAPI.getConfig()
   Object.assign(currentConfig, config)
-  console.log(config, 'config')
-  console.log(currentConfig, 'currentConfig')
 })
 
 // 监听配置变化并自动保存

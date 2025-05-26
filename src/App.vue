@@ -33,11 +33,23 @@ import { useConversationStore } from './stores/conversation';
 import { useProviderStore } from './stores/provider'
 import { useI18n } from 'vue-i18n'
 import { initI18n } from './i18n/index'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const conversationStore = useConversationStore()
 const provdierStore = useProviderStore()
 const items = computed(() => conversationStore.items)
 const { t } = useI18n()
+
+// 监听菜单事件
+window.electronAPI.onMenuNewConversation(() => {
+  router.push('/')
+})
+
+window.electronAPI.onMenuOpenSettings(() => {
+  router.push('/settings')
+})
 
 onMounted(async () => {
   await initI18n()

@@ -1,7 +1,7 @@
 import type { ForgeConfig } from "@electron-forge/shared-types";
 import { MakerSquirrel } from "@electron-forge/maker-squirrel";
 import { VitePlugin } from "@electron-forge/plugin-vite";
-import { FusesPlugin } from "@electron-forge/plugin-fuses";
+import { FusesPlugin } from "@electron-forge/plugin-fuses"; // 引入 GitHub 发布器
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
 
 import dotenv from "dotenv";
@@ -39,6 +39,22 @@ const config: ForgeConfig = {
     // new MakerRpm({}),
     // 为 Linux 平台生成 DEB 包
     // new MakerDeb({}),
+  ],
+
+  // 添加发布器配置
+  publishers: [
+    {
+      name: "@electron-forge/publisher-github",
+      config: {
+        repository: {
+          owner: "wangyongalive",
+          name: "eletron-chat",
+        },
+        prerelease: false,
+        draft: true,
+        authToken: process.env.GITHUB_TOKEN,
+      },
+    },
   ],
 
   // 定义插件配置

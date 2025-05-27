@@ -26,6 +26,7 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.8.1",
     "@electron-forge/plugin-fuses": "^7.8.1",
     "@electron-forge/plugin-vite": "^7.8.1",
+    "@electron-forge/publisher-github": "^7.6.0",
     "@electron/fuses": "^1.8.0",
     "@iconify/vue": "^5.0.0",
     "@tailwindcss/typography": "^0.5.14",
@@ -57,8 +58,8 @@
     "pinia": "^3.0.2",
     "radix-vue": "^1.9.17",
     "vue": "^3.5.13",
+    "vue-i18n": "^11.1.1",
     "vue-markdown-render": "^2.2.1",
-    "vue-router": "^4.5.1",
-     "vue-i18n": "^11.1.1"
+    "vue-router": "^4.5.1"
   }
 }
